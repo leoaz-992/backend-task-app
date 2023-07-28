@@ -10,8 +10,9 @@ import jakarta.validation.Valid;
 import java.util.HashSet;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
-    //@Autowired
-    //PasswordEncoder passwordEncoder;
+    @Autowired
+    PasswordEncoder passwordEncoder;
     
     @Autowired
     Userservice userService;
@@ -30,6 +31,7 @@ public class UserController {
     
     
     @PostMapping("/user/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserDTO newUser){
         Set<Rol> roles = new HashSet<>();
         roles.add(rolService.getByRolNombre(RolNombre.ROLE_USER).get());
@@ -39,7 +41,7 @@ public class UserController {
        
         UserEntity user= UserEntity.builder()
                 .username(newUser.getUsername())
-                .password(newUser.getPassword())
+                .password(passwordEncoder.encode( newUser.getPassword()))
                 .email(newUser.getEmail())
                 .roles(roles)
                 .build();
@@ -49,6 +51,7 @@ public class UserController {
     }
     
     @DeleteMapping("/delete/{id}")// elimina un user buscando por el id
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
         userService.deleteUserById(id);
         return ResponseEntity.ok("borrado");
