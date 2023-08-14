@@ -74,7 +74,7 @@ public class TaskController {
         }
       //verifica que el nombre de la tarea no se repita 
         if(taskService.existsByNameTask(task.getNameTask()) && taskService.findByNameTask(task.getNameTask()).get().getId()!= id){
-            return new ResponseEntity(new Mensaje("Ese nombre ya existe"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new Mensaje("Ese nombre de la tarea ya existe"), HttpStatus.BAD_REQUEST);
         }
       //verifica que el nombre de la tarea no se envie en blanco
         if(StringUtils.isBlank(task.getNameTask())){
