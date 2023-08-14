@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ public class TaskController {
     private InterfaceTaskService taskService;
     
     @PostMapping("/new")//crea una tarea nueva
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> addTask(@RequestBody DtoTask task){
      //verifica si una tarea con el mismo nombre ya existe.
         if(taskService.existsByNameTask(task.getNameTask())){
@@ -45,12 +47,14 @@ public class TaskController {
     }
     
     @GetMapping("/list") //Lista todas las tareas 
+    
     public ResponseEntity<List<Task>> ListOfTasks(){
        List<Task> listTasks= taskService.getAllTasks();
        return new ResponseEntity(listTasks, HttpStatus.OK); 
     }
     
     @DeleteMapping("/delete/{id}")// elimina una tarea buscandola por el id
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
      //busca si existe el id recibido 
         if(!taskService.existsById(id)){
@@ -62,6 +66,7 @@ public class TaskController {
     }
     
     @PutMapping("edit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> editarTask(@PathVariable Long id, @RequestBody DtoTask task){
       //verifica que la tarea con el id recibido exista
         if(!taskService.existsById(id)){
@@ -69,7 +74,7 @@ public class TaskController {
         }
       //verifica que el nombre de la tarea no se repita 
         if(taskService.existsByNameTask(task.getNameTask()) && taskService.findByNameTask(task.getNameTask()).get().getId()!= id){
-            return new ResponseEntity(new Mensaje("Ese nombre ya existe"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new Mensaje("Ese nombre de la tarea ya existe"), HttpStatus.BAD_REQUEST);
         }
       //verifica que el nombre de la tarea no se envie en blanco
         if(StringUtils.isBlank(task.getNameTask())){
