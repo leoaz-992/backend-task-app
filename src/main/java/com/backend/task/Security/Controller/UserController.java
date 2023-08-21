@@ -1,5 +1,6 @@
 package com.backend.task.Security.Controller;
 
+import com.backend.task.Model.Task;
 import com.backend.task.Security.DTO.UserDTO;
 import com.backend.task.Security.Entity.Rol;
 import com.backend.task.Security.Entity.UserEntity;
@@ -34,6 +35,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserDTO newUser){
         Set<Rol> roles = new HashSet<>();
+        Set<Task> task = new HashSet<>();
         roles.add(rolService.getByRolNombre(RolNombre.ROLE_USER).get());
         if(newUser.getRoles().contains("admin")) {
             roles.add(rolService.getByRolNombre(RolNombre.ROLE_ADMIN).get());
@@ -44,6 +46,7 @@ public class UserController {
                 .password(passwordEncoder.encode( newUser.getPassword()))
                 .email(newUser.getEmail())
                 .roles(roles)
+                .listTasks(task)
                 .build();
         
         userService.saveUser(user);

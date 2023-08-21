@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InterfaceTaskService {
-     public List<Task> getAllTasks();    
+    public List<Task> getAllTasks();    
     public void saveTask(Task task);
     public void deleteTask(Long id);
     public Task getOneTask(Long id);

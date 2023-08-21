@@ -1,5 +1,6 @@
 package com.backend.task.Security.DTO;
 
+import com.backend.task.Model.Task;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.util.Set;
@@ -24,4 +25,6 @@ public class UserDTO {
     private String password;
     
     private Set<String> roles;
+    
+    private Set<Task> listTasks;
 }

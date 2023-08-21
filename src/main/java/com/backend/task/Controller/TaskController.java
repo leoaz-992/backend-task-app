@@ -2,6 +2,7 @@ package com.backend.task.Controller;
 
 import com.backend.task.Dto.DtoTask;
 import com.backend.task.Model.Task;
+import com.backend.task.Security.Repositories.UserRepository;
 import com.backend.task.Service.InterfaceTaskService;
 import io.micrometer.common.util.StringUtils;
 import java.util.List;
@@ -26,6 +27,8 @@ public class TaskController {
     
     @Autowired
     private InterfaceTaskService taskService;
+    @Autowired
+    UserRepository  userRepo;
     
     @PostMapping("/new")//crea una tarea nueva
     @PreAuthorize("hasRole('ADMIN')")
@@ -34,12 +37,19 @@ public class TaskController {
         if(taskService.existsByNameTask(task.getNameTask())){
              return new ResponseEntity(new Mensaje("La tarea ya existe."), HttpStatus.BAD_REQUEST);
         }
+        if (StringUtils.isBlank(task.getNameUser())){
+            return new ResponseEntity(new Mensaje("La tarea debe ser asignada a un usuario, El usuario no puede estar vacio."), HttpStatus.BAD_REQUEST);
+        }
+        if(!userRepo.existsByUsername(task.getNameUser())){
+            return new ResponseEntity(new Mensaje("El usuario asignado no exixte."), HttpStatus.BAD_REQUEST);
+        }
      //crea una nueva tarea y añade los datos enviados.
         Task tasknew = new Task();
         tasknew.setNameTask(task.getNameTask());
         tasknew.setDescripcionTask(task.getDescripcionTask());
         tasknew.setReminder(task.isReminder());
         tasknew.setDateTask(task.getDateTask());
+        tasknew.setUser(userRepo.findByUsername(task.getNameUser()).orElse(null));
      //guarda la nueva tarea en la db
         taskService.saveTask(tasknew);
      //retorna un mensaje de OK
@@ -47,7 +57,7 @@ public class TaskController {
     }
     
     @GetMapping("/list") //Lista todas las tareas 
-    
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Task>> ListOfTasks(){
        List<Task> listTasks= taskService.getAllTasks();
        return new ResponseEntity(listTasks, HttpStatus.OK); 
@@ -80,12 +90,16 @@ public class TaskController {
         if(StringUtils.isBlank(task.getNameTask())){
             return new ResponseEntity(new Mensaje("El nombre de la tarea no pueden estar vacio"), HttpStatus.BAD_REQUEST);
         }
+        if(!userRepo.existsByUsername(task.getNameUser())){
+            return new ResponseEntity(new Mensaje("El ususario asignado no exixte."), HttpStatus.BAD_REQUEST);
+        }
       //Se Actualiza los datos y se guardan en la db
         Task editTask =taskService.getOneTask(id);
         editTask.setNameTask(task.getNameTask());
         editTask.setDescripcionTask(task.getDescripcionTask());
         editTask.setReminder(task.isReminder());
         editTask.setDateTask(task.getDateTask());
+        editTask.setUser(userRepo.findByUsername(task.getNameUser()).orElse(null));
         taskService.saveTask(editTask);
 
         return new ResponseEntity(new Mensaje("tarea actualizada"), HttpStatus.OK);

@@ -1,5 +1,6 @@
 package com.backend.task.Dto;
 
+import com.backend.task.Security.Entity.UserEntity;
 import jakarta.validation.constraints.NotBlank;
 import java.io.Serializable;
 
@@ -10,15 +11,25 @@ public class DtoTask implements Serializable {
     private boolean reminder;
     private String dateTask;
     private String descripcionTask;
+    private String nameUser;
 
     public DtoTask() {
     }
 
-    public DtoTask(String nameTask, boolean reminder, String dateTask, String descripcionTask) {
+    public DtoTask(String nameTask, boolean reminder, String dateTask, String descripcionTask, String user) {
         this.nameTask = nameTask;
         this.reminder = reminder;
         this.dateTask = dateTask;
         this.descripcionTask = descripcionTask;
+        this.nameUser = user;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
     public String getNameTask() {
