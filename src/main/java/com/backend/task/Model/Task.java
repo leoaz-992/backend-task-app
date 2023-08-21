@@ -1,14 +1,24 @@
 package com.backend.task.Model;
 
+import com.backend.task.Security.Entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity(name = "tasks")
 public class Task {
     
@@ -20,15 +30,10 @@ public class Task {
     private boolean reminder;
     private String dateTask;
     private String descripcionTask;
+    
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+    @JsonIgnoreProperties({"email", "password","roles","listTasks"}) 
+    private UserEntity user;
 
-    public Task() {
-    }
-
-    public Task(String nameTask, boolean reminder, String dateTask, String descripcionTask) {
-        this.nameTask = nameTask;
-        this.reminder = reminder;
-        this.dateTask = dateTask;
-        this.descripcionTask = descripcionTask;
-    }
     
 }
