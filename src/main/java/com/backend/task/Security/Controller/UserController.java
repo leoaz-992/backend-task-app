@@ -56,6 +56,10 @@ public class UserController {
     @DeleteMapping("/delete/{id}")// elimina un user buscando por el id
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable("id") Long id){
+        //VERIFICA QUE EL USUSARIO ADMIN NO SE BORRE A SI MISMO
+        if(id == 1){
+            return ResponseEntity.badRequest().body("no se puede borrar un usuario ADMINISTRADOR");
+        }
         userService.deleteUserById(id);
         return ResponseEntity.ok("borrado");
     }

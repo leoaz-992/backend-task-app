@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,9 +32,13 @@ public class Task {
     private String dateTask;
     private String descripcionTask;
     
+    @OneToOne
+    private StatusTask state;
+    
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @JsonIgnoreProperties({"email", "password","roles","listTasks"}) 
     private UserEntity user;
+    
 
     
 }

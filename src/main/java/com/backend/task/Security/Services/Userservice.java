@@ -15,7 +15,7 @@ public class Userservice {
     @Autowired
     UserRepository  userRepo;
     //busca el usuario por su username y lo retorna
-    public Optional<UserEntity> getByUsername(String username){
+    public Optional<UserEntity> getByUser(String username){
         return userRepo.findByUsername(username);
     }
     //confirma si existe el username
