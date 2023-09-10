@@ -2,6 +2,7 @@ package com.backend.task.Service;
 
 import com.backend.task.Model.Task;
 import com.backend.task.Repository.TaskRepository;
+import com.backend.task.Security.Entity.UserEntity;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +50,12 @@ public class TaskService implements InterfaceTaskService {
     @Override
     public Optional<Task> findByNameTask(String nameTask) {
         return taskRepo.findByNameTask(nameTask);
+        
+    }
+
+    @Override
+    public List<Task> getAllTasksOfUser(UserEntity user) {
+        return taskRepo.findAllByUser(user);
     }
     
 }
